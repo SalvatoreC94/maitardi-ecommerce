@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -9,20 +10,17 @@ class ProductFactory extends Factory
 {
     public function definition(): array
     {
-        $name = $this->faker->words(3, true);
+        $name = $this->faker->words(2, true);
 
         return [
-            'name'               => ucfirst($name),
-            'slug'               => Str::slug($name . '-' . Str::random(5)),
-            'sku'                => strtoupper(Str::random(10)),
-            'price'              => $this->faker->randomFloat(2, 5, 199),
-            'compare_at_price'   => $this->faker->boolean(30) ? $this->faker->randomFloat(2, 10, 249) : null,
-            'stock'              => $this->faker->numberBetween(0, 100),
-            'is_active'          => true,
-            'is_featured'        => $this->faker->boolean(10),
-            'short_description'  => $this->faker->sentence(10),
-            'description'        => $this->faker->paragraph(4),
-            'weight'             => $this->faker->boolean(40) ? $this->faker->randomFloat(3, 0.1, 3) : null,
+            'category_id' => Category::inRandomOrder()->first()?->id ?? Category::factory(),
+            'name'        => ucfirst($name),
+            'slug'        => Str::slug($name) . '-' . $this->faker->unique()->numberBetween(1, 9999),
+            'sku'         => strtoupper(Str::random(8)),
+            'description' => $this->faker->sentence(),
+            'price'       => $this->faker->randomFloat(2, 1, 50),
+            'stock'       => $this->faker->numberBetween(5, 50),
+            'is_active'   => true,
         ];
     }
 }

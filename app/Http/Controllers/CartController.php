@@ -1,47 +1,41 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Services\CartManager;
 
 use Illuminate\Http\Request;
-use App\Services\CartManager;
 
 class CartController extends Controller
 {
-    protected $cart;
-
-    public function __construct(CartManager $cartManager)
-    {
-        $this->cart = $cartManager;
-    }
-
     public function index()
     {
-        return response()->json($this->cart->getDetails());
+        $cart = app(\App\Services\CartManager::class)->getDetails();
+        return response()->json($cart);
     }
 
     public function add(Request $request, int $productId)
     {
         $quantity = $request->input('quantity', 1);
-        $this->cart->addItem($productId, $quantity);
-        return response()->json($this->cart->getDetails());
+        app(\App\Services\CartManager::class)->addItem($productId, $quantity);
+        return response()->json(app(\App\Services\CartManager::class)->getDetails());
     }
 
     public function update(Request $request, int $itemId)
     {
         $quantity = $request->input('quantity', 1);
-        $this->cart->updateItem($itemId, $quantity);
-        return response()->json($this->cart->getDetails());
+        app(\App\Services\CartManager::class)->updateItem($itemId, $quantity);
+        return response()->json(app(\App\Services\CartManager::class)->getDetails());
     }
 
     public function remove(int $itemId)
     {
-        $this->cart->removeItem($itemId);
-        return response()->json($this->cart->getDetails());
+        app(\App\Services\CartManager::class)->removeItem($itemId);
+        return response()->json(app(\App\Services\CartManager::class)->getDetails());
     }
 
     public function clear()
     {
-        $this->cart->clear();
-        return response()->json($this->cart->getDetails());
+        app(\App\Services\CartManager::class)->clear();
+        return response()->json(app(\App\Services\CartManager::class)->getDetails());
     }
 }

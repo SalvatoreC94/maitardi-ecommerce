@@ -25,6 +25,7 @@ class CartManager
                 ['id' => (string) Str::uuid()]
             );
 
+            // Merge guest -> user
             if (session()->has('cart_session_id')) {
                 $guestId = session('cart_session_id');
                 $guestCart = Cart::where('session_id', $guestId)->first();
@@ -40,6 +41,7 @@ class CartManager
             return $cart;
         }
 
+        // Guest
         $sessionId = session('cart_session_id', (string) Str::uuid());
         session(['cart_session_id' => $sessionId]);
 
@@ -93,7 +95,7 @@ class CartManager
     public function calculateTotals(): array
     {
         $subtotal = $this->cart->items->sum(fn($item) => $item->quantity * $item->unit_price);
-        $shipping = 6.90; 
+        $shipping = 6.90; // base
         $total = $subtotal + $shipping;
 
         return [
@@ -107,7 +109,7 @@ class CartManager
     {
         return [
             'id'    => $this->cart->id,
-            'items' => $this->cart->items()->with('product')->get(),
+            'items' => $this->cart->items()->with('product')->get()->toArray(),
             'totals'=> $this->calculateTotals(),
         ];
     }
